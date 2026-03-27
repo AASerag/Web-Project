@@ -1,62 +1,92 @@
-﻿Student Name: Adam Ahmed Serag
+Healthcare Management System API
+Student Name: Adam Ahmed Serag
 
 Student ID: 211014233
 
-Course: Web Engineering Graduation Project
+Course: Web Engineering
 
-🚀 How to Run the Project
-Follow these steps to set up the environment and run the API:
+Institution: Faculty of Engineering
 
-Open the Solution: Open the .sln file in Visual Studio 2022.
+Project Overview
+This project is a RESTful Web API built using ASP.NET Core designed to manage healthcare operations. It provides a secure and optimized backend for handling patient data, medical records, doctor assignments, and prescriptions. The system implements professional software patterns, including Layered Architecture, Dependency Injection, and Data Transfer Objects (DTOs), to ensure maintainability and scalability.
 
-Restore Packages: Visual Studio should automatically restore the NuGet packages (JWT Bearer, EF Core, Hangfire).
+System Architecture and Design Patterns
+The application follows a structured approach to separate concerns and ensure clean code:
 
-Setup the Database:
+Layered Architecture: Logic is divided into Controllers (API endpoints), Services (business logic), and Data (database context and entities).
 
-Open the Package Manager Console (Tools > NuGet Package Manager > Package Manager Console).
+Dependency Injection (DI): Interfaces and implementation classes are registered within the service container to decouple components and improve testability.
 
-Run the command: Update-Database
+Data Transfer Objects (DTOs): Used to control data exposure and prevent over-posting. This ensures that internal database entities are never exposed directly to the client.
 
-Note: This will create the AdamAhmedWebDb on your local SQL server.
+Repository/Service Pattern: All database interactions are abstracted through specialized service classes, ensuring the controllers remain thin and focused on HTTP concerns.
 
-Run the App: Press F5 or the Start button.
+Database Design and Relationships
+The database schema implements three primary types of relational mappings using Entity Framework Core:
 
-Access Swagger: The documentation will open at http://localhost:5075/swagger.
+One-to-One (1:1): Every Patient is linked to a unique MedicalRecord. This relationship ensures that personal identity data is separated from sensitive clinical history while maintaining a direct link via a foreign key.
 
-🛠️ Technologies Used
-ASP.NET Core Web API: The primary framework for building the RESTful services.
+One-to-Many (1:N): A Doctor can be assigned to multiple Patients, while each Patient is assigned to exactly one primary Doctor.
 
-Entity Framework Core (EF Core): Used as the ORM to manage database operations asynchronously.
+Many-to-Many (N:N): Implemented using a join table named Prescriptions. This allows multiple Medications to be associated with multiple Patients, tracking specific details like dosage and duration within the join entity.
 
-SQL Server (LocalDB): The database engine used for persistent storage.
+Security and Authentication
+The system implements a robust security layer to protect sensitive healthcare data:
 
-JWT (JSON Web Tokens): Implemented for secure, stateless authentication and Role-Based Authorization.
+JWT Bearer Authentication: Stateless authentication is handled via JSON Web Tokens.
 
-Hangfire: A background job orchestrator used for the Cron Job requirements (monitoring system health).
+Role-Based Authorization: Endpoints are restricted based on user roles.
 
-LINQ (Language Integrated Query): Used for data optimization, specifically utilizing .Select() projections and .AsNoTracking() for high-performance read-only queries.
+Admin: Has full CRUD (Create, Read, Update, Delete) permissions.
 
-Swagger (OpenAPI): Provides the interactive documentation and testing interface for all endpoints.
+User/Student: Limited to Read-Only access for specific endpoints.
 
-🔒 Security: HTTP-only Cookies Standard
-Why are HTTP-only cookies an industry standard for authentication security?
+Refresh Tokens: Implemented as an advanced feature to allow for secure session renewal without requiring the user to re-authenticate frequently.
 
-In modern web development, while JWTs can be stored in LocalStorage, HTTP-only cookies are the preferred industry standard because:
+Industry Standard Security (HTTP-only Cookies):
 
-XSS Protection: Cookies marked as HttpOnly cannot be accessed by client-side JavaScript. This prevents malicious scripts (Cross-Site Scripting) from stealing a user's session token.
+Technical Explanation: While this API utilizes JWTs in the Authorization header, the industry standard for web applications often involves storing tokens in HTTP-only cookies. This is a critical defense against Cross-Site Scripting (XSS). By marking a cookie as HttpOnly, the browser prevents any client-side JavaScript from accessing the token. This ensures that even if a malicious script is executed on the page, the authentication session cannot be stolen.
 
-Reduced Attack Surface: By keeping the token out of the reachable browser memory, the risk of "token sniffing" by third-party libraries or browser extensions is significantly reduced.
+Performance Optimization Logic
+The API utilizes Language Integrated Query (LINQ) best practices to ensure high performance under load:
 
-📸 API Documentation \& Screenshots
-All endpoints are fully documented and testable via the Swagger UI.
+AsNoTracking: Used for all read-only operations to bypass the Entity Framework change tracker, significantly reducing memory consumption and processing time.
 
-Authentication: /api/Auth/login and /api/Auth/refresh
+Query Projection: Instead of fetching entire database entities, the .Select() method is used to retrieve only the specific fields required by the DTO. This minimizes the payload size and optimizes SQL execution.
 
-Patients: Full CRUD with 1:1 and 1:N relationships.
+Asynchronous Programming: All database and I/O operations utilize async and await to prevent thread-blocking and improve the responsiveness of the web server.
 
-Prescriptions: Complex Many-to-Many logic.
+Background Task Management (Hangfire)
+The project integrates Hangfire for managing background processing and scheduled tasks:
 
-Hangfire Dashboard: Accessible at /hangfire.
+Cron Jobs: A recurring system health check is scheduled to run automatically at defined intervals.
 
-(Screenshots of working endpoints are included in the /Screenshots folder of this submission).
+Dashboard: A secure administrative dashboard is accessible at /hangfire, allowing real-time monitoring of job success, retries, and failures.
 
+Setup and Installation Instructions
+Prerequisites: Ensure .NET 7.0 (or higher) and SQL Server LocalDB are installed.
+
+Clone Repository: Download or clone the source code into a local directory.
+
+Database Initialization:
+
+Open the Package Manager Console in Visual Studio.
+
+Execute the command: Update-Database to generate the schema from existing migrations.
+
+Configuration: Review appsettings.json to ensure the connection string points to your local SQL instance.
+
+Execution: Run the project using the Start button or press F5.
+
+Documentation: Navigate to http://localhost:5075/swagger to access the interactive API documentation.
+
+AI Collaboration Disclosure
+This project utilized Google Gemini for architectural guidance, security auditing, and documentation assistance. AI was specifically used to:
+
+Validate Entity Framework Core relationship configurations.
+
+Refine LINQ projection logic for DTO optimization.
+
+Draft technical explanations for industry-standard security protocols.
+
+Assist in troubleshooting DTO property mapping errors.
