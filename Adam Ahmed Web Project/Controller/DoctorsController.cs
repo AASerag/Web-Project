@@ -28,5 +28,21 @@ namespace Adam_Ahmed_Web_Project.Controllers
             var result = await _doctorService.CreateDoctorAsync(createDto);
             return CreatedAtAction(nameof(GetAll), new { id = result.Id }, result);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, DoctorUpdateDto updateDto)
+        {
+            var result = await _doctorService.UpdateDoctorAsync(id, updateDto);
+            if (!result) return NotFound();
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _doctorService.DeleteDoctorAsync(id);
+            if (!result) return NotFound();
+            return Ok();
+        }
     }
 }

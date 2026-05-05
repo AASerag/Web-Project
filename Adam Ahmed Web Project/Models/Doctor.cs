@@ -8,6 +8,8 @@ namespace Adam_Ahmed_Web_Project.Models
         public string Name { get; set; } = string.Empty;
         public string Specialization { get; set; } = string.Empty;
 
+        public int YearsOfExperience { get; set; }
+
        
         public List<Appointment> Appointments { get; set; } = new();
     }

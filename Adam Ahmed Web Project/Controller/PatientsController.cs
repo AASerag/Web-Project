@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Adam_Ahmed_Web_Project.Dtos;
 using Adam_Ahmed_Web_Project.Services;
-using Microsoft.AspNetCore.Authorization;
+// using Microsoft.AspNetCore.Authorization;
 
 namespace Adam_Ahmed_Web_Project.Controllers
 {
+    // [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class PatientsController : ControllerBase
@@ -18,7 +19,7 @@ namespace Adam_Ahmed_Web_Project.Controllers
 
         // GET: api/patients
         [HttpGet]
-        [Authorize(Roles = "Admin,User")] // Both Admin and User can view
+        // [Authorize(Roles = "Admin,User")]  <-- COMMENTED OUT
         public async Task<ActionResult<IEnumerable<PatientReadDto>>> GetAll()
         {
             var patients = await _patientService.GetAllPatientsAsync();
@@ -27,7 +28,7 @@ namespace Adam_Ahmed_Web_Project.Controllers
 
         // GET: api/patients/5
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,User")] // Both Admin and User can view
+        // [Authorize(Roles = "Admin,User")] <-- COMMENTED OUT
         public async Task<ActionResult<PatientReadDto>> GetById(int id)
         {
             var patient = await _patientService.GetPatientByIdAsync(id);
@@ -37,7 +38,7 @@ namespace Adam_Ahmed_Web_Project.Controllers
 
         // POST: api/patients
         [HttpPost]
-        [Authorize(Roles = "Admin")] // ONLY Admin can create
+        // [Authorize(Roles = "Admin")] <-- COMMENTED OUT
         public async Task<ActionResult<PatientReadDto>> Create(PatientCreateDto createDto)
         {
             var result = await _patientService.CreatePatientAsync(createDto);
@@ -46,7 +47,7 @@ namespace Adam_Ahmed_Web_Project.Controllers
 
         // PUT: api/patients/5
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")] // ONLY Admin can update
+        // [Authorize(Roles = "Admin")] <-- COMMENTED OUT
         public async Task<IActionResult> Update(int id, PatientUpdateDto updateDto)
         {
             var success = await _patientService.UpdatePatientAsync(id, updateDto);
@@ -56,7 +57,7 @@ namespace Adam_Ahmed_Web_Project.Controllers
 
         // DELETE: api/patients/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")] // ONLY Admin can delete
+        // [Authorize(Roles = "Admin")] <-- COMMENTED OUT
         public async Task<IActionResult> Delete(int id)
         {
             var success = await _patientService.DeletePatientAsync(id);

@@ -46,6 +46,8 @@ builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<IMedicationService, MedicationService>();
 builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
 builder.Services.AddScoped<IMedicalRecordService, MedicalRecordService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IMedicalRecordService, MedicalRecordService>();
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -60,6 +62,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+
+        
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var token = context.Request.Cookies["jwtToken"];
+                if (!string.IsNullOrEmpty(token))
+                {
+                    context.Token = token;
+                }
+                return Task.CompletedTask;
+            }
         };
     });
 
@@ -77,6 +93,19 @@ builder.Services.AddHangfire(configuration => configuration
 
 builder.Services.AddHangfireServer();
 
+
+// Define the CORS Policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000") // 1. Must explicitly state your React URL
+              .AllowAnyHeader()                     // 2. Allows content-type JSON
+              .AllowAnyMethod()                     // 3. Allows GET, POST, PUT, DELETE
+              .AllowCredentials();                  // 4. CRITICAL: Allows HttpOnly cookies
+    });
+});
+
 var app = builder.Build();
 
 app.UseSwagger();
@@ -86,6 +115,14 @@ app.UseSwaggerUI();
 
 
 // app.UseHttpsRedirection();
+app.UseCors("AllowReactApp");
+
+app.UseAuthentication(); // (If you have this line)
+app.UseAuthorization();
+
+app.MapControllers();
+app.Run();
+
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -13,6 +13,8 @@ namespace Adam_Ahmed_Web_Project.DataBase
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Medication> Medications { get; set; }
         public DbSet<Prescription> Prescriptions { get; set; }
+        
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

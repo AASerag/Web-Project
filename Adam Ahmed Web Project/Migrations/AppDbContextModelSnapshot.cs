@@ -68,6 +68,9 @@ namespace AdamAhmedWebProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("YearsOfExperience")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Doctors");
@@ -81,18 +84,35 @@ namespace AdamAhmedWebProject.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Allergies")
+                    b.Property<int?>("AppointmentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Diagnosis")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("BloodType")
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Prescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId");
+
+                    b.HasIndex("DoctorId");
 
                     b.HasIndex("PatientId")
                         .IsUnique();
@@ -168,6 +188,31 @@ namespace AdamAhmedWebProject.Migrations
                     b.ToTable("Prescriptions");
                 });
 
+            modelBuilder.Entity("Adam_Ahmed_Web_Project.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("Adam_Ahmed_Web_Project.Models.Appointment", b =>
                 {
                     b.HasOne("Adam_Ahmed_Web_Project.Models.Doctor", "Doctor")
@@ -189,11 +234,25 @@ namespace AdamAhmedWebProject.Migrations
 
             modelBuilder.Entity("Adam_Ahmed_Web_Project.Models.MedicalRecord", b =>
                 {
+                    b.HasOne("Adam_Ahmed_Web_Project.Models.Appointment", "Appointment")
+                        .WithMany()
+                        .HasForeignKey("AppointmentId");
+
+                    b.HasOne("Adam_Ahmed_Web_Project.Models.Doctor", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Adam_Ahmed_Web_Project.Models.Patient", "Patient")
                         .WithOne("MedicalRecord")
                         .HasForeignKey("Adam_Ahmed_Web_Project.Models.MedicalRecord", "PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Appointment");
+
+                    b.Navigation("Doctor");
 
                     b.Navigation("Patient");
                 });

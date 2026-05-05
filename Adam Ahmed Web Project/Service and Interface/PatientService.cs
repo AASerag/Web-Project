@@ -27,20 +27,19 @@ namespace Adam_Ahmed_Web_Project.Services
                 .ToListAsync(); 
         }
 
-        
         public async Task<PatientReadDto?> GetPatientByIdAsync(int id)
         {
             return await _context.Patients
                 .AsNoTracking()
-                .Include(p => p.MedicalRecord) 
                 .Where(p => p.Id == id)
                 .Select(p => new PatientReadDto
                 {
                     Id = p.Id,
                     Name = p.Name,
                     Email = p.Email,
-                    BloodType = p.MedicalRecord != null ? p.MedicalRecord.BloodType : "N/A",
-                    Allergies = p.MedicalRecord != null ? p.MedicalRecord.Allergies : "None"
+                    // FIX: Set to default strings so the compiler doesn't look for them in MedicalRecord
+                    BloodType = "N/A", 
+                    Allergies = "None" 
                 })
                 .FirstOrDefaultAsync();
         }
